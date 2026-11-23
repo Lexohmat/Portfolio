@@ -64,3 +64,7 @@ footer{font-size:14px;color:#a7a4ad;margin-top:32px}footer a{padding:8px 0;min-h
  .portrait-caption{right:20px}
 }
 @media(max-width:360px){:root{--page-gutter:16px;--content-pad:20px}nav{gap:8px}.skill{padding:20px}.tool-list{gap:8px}.tool-list span{padding:8px 10px}}
+
+/* The planning cursor exists only during the once-per-visit LCMD reveal. */
+.planning-cursor{position:absolute;width:2px;opacity:0;pointer-events:none;background:var(--accent,#a78bfa);z-index:2;transform-origin:top left}
+@media(prefers-reduced-motion:reduce){.planning-cursor{display:none}}
