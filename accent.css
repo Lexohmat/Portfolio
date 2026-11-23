@@ -1,0 +1,26 @@
+/* Electric Lilac: shared accent tokens with dark ink on filled controls. */
+:root{--accent:#a78bfa;--accent-hover:#bca7ff;--accent-ink:#211335;--accent-soft:#a78bfa14;--accent-light-surface:#6842ae}
+.skill-icon{color:var(--accent);background:var(--accent-soft)}
+.skill:hover{border-color:#a78bfa70}
+h1>span,.section-heading h2>span{color:var(--accent)}
+.brand .mark{color:var(--accent);border-color:#a78bfa55;background:#a78bfa08}
+nav a:hover,nav a:focus-visible,footer a:hover{color:var(--accent)}
+.button{background:var(--accent);color:var(--accent-ink);font-weight:600;transition:background .2s,box-shadow .2s}
+.button:hover{background:var(--accent-hover);box-shadow:0 5px 22px #a78bfa20}
+.feature .seal-link,.feature:first-of-type .seal-link{background:var(--accent);color:var(--accent-ink);font-weight:650}
+.feature .seal-link:hover,.feature:first-of-type .seal-link:hover{background:var(--accent-hover);color:var(--accent-ink)}
+.feature .project-copy summary:after,.shared summary:after{color:var(--accent-light-surface)}
+.feature .project-copy summary:hover,.feature:first-of-type .project-copy summary:hover,.shared summary:hover{color:var(--accent-light-surface)}
+.art-tags span:nth-child(1),.art-tags span:nth-child(4),.portrait-tags span:nth-child(1){background:var(--accent);color:var(--accent-ink)}
+.portrait-tags span:nth-child(3){background:#ded2fc;color:var(--accent-ink)}
+.visual-hero .motion-toggle{border-color:#a78bfa66;color:#d6c8ff;background:#a78bfa0c}
+.visual-hero .motion-toggle:hover{border-color:var(--accent);background:#a78bfa20}
+.project:hover{border-color:#a78bfa80}
+.tool-list span{border-color:#a78bfa26}
+.tools{background:radial-gradient(ellipse at top right,#a78bfa0c,#151516 60%)}
+a:focus-visible,button:focus-visible,summary:focus-visible,#viewer .close:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.feature .seal-link:focus-visible{outline-color:var(--accent-light-surface)}
+.project-copy summary:focus-visible,.shared summary:focus-visible{outline-color:var(--accent-light-surface);border-radius:4px}
+#viewer .close:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+::selection{background:var(--accent);color:var(--accent-ink)}
+@media(prefers-reduced-motion:reduce){.button{transition:none}}
