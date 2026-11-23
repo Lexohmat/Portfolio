@@ -26,32 +26,80 @@ document.querySelectorAll('.skill-icon').forEach((el,i)=>{el.innerHTML=`<svg vie
 hero.classList.add('visual-hero');
 hero.querySelector('h3').remove();hero.querySelector('.hero-sub').remove();hero.querySelector('.hero-phases').remove();hero.querySelector('.hero-source').remove();
 const statusImage=document.createElement('img');statusImage.className='hero-status';statusImage.alt='lcmd Status-Tracking';statusImage.src='https://cdn.prod.website-files.com/65fd31d519cdd770990dd460/6989df83077dab4e5dde6786_Home%20Status%20Tracking%20DE.webp';hero.querySelector('.hero-stage').append(statusImage);
-// Scroll-triggered composition: planning canvas first, analysis panels second.
-// Default styles stay visible, including when observers or scripts are unavailable.
+// One authored focal sequence: a planning cursor reveals the real LCMD canvas.
+// All content remains visible if animation, image loading or observers fail.
 const scrollAnimations=new Set();
-function playScrollMotion(element,frames,delay=0,duration=480){
- if(reduced.matches||document.hidden||typeof element.animate!=='function')return;
- const animation=element.animate(frames,{duration,delay,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'});
+function playScrollMotion(element,frames,delay=0,duration=440,easing='cubic-bezier(.16,1,.3,1)'){
+ if(!element||reduced.matches||document.hidden||typeof element.animate!=='function')return;
+ const animation=element.animate(frames,{duration,delay,easing,fill:'backwards'});
  scrollAnimations.add(animation);
  const release=()=>scrollAnimations.delete(animation);
  animation.onfinish=release;animation.oncancel=release;
+ return animation;
 }
-if('IntersectionObserver' in window){
- const entrances=new IntersectionObserver(entries=>entries.forEach(entry=>{
+const stage=hero.querySelector('.hero-stage');
+const scan=document.createElement('span');scan.className='planning-cursor';scan.setAttribute('aria-hidden','true');stage.append(scan);
+const readyImage=img=>new Promise(resolve=>{
+ if(img.complete){resolve();return}
+ const finish=()=>{clearTimeout(timeout);img.removeEventListener('load',finish);img.removeEventListener('error',finish);resolve()};
+ const timeout=setTimeout(finish,4000);
+ img.addEventListener('load',finish,{once:true});img.addEventListener('error',finish,{once:true});
+});
+function stopScrollMotion(){scrollAnimations.forEach(animation=>animation.cancel())}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopScrollMotion()});
+function installScrollMotion(){
+ if(!('IntersectionObserver' in window)||reduced.matches)return;
+ const entrances=new IntersectionObserver(entries=>entries.forEach(async entry=>{
   if(!entry.isIntersecting)return;
-  entrances.unobserve(entry.target);
-  if(entry.target===hero){
-   playScrollMotion(hero.querySelector('.hero-main'),[{clipPath:'inset(0 90% 0 0)',opacity:.5},{clipPath:'inset(0)',opacity:1}],0,720);
-   [hero.querySelector('.hero-status'),hero.querySelector('.hero-float')].forEach((panel,i)=>playScrollMotion(panel,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],180+i*100,460));
-  }else if(entry.target.id==='wordpress'){
-   entry.target.querySelectorAll('.project').forEach((project,i)=>playScrollMotion(project,[{opacity:.25,transform:'translateY(14px)'},{opacity:1,transform:'none'}],i*65));
+  const target=entry.target;entrances.unobserve(target);
+  if(target===hero){
+   const canvas=hero.querySelector('.hero-main');
+   const waitingSince=performance.now();
+   await readyImage(canvas);
+   const loadedLate=performance.now()-waitingSince>500;
+   if(reduced.matches)return;
+   const bounds=hero.getBoundingClientRect();
+   if(document.hidden||bounds.bottom<0||bounds.top>innerHeight){entrances.observe(hero);return}
+   if(!canvas.naturalWidth||loadedLate)return;
+   const canvasBounds=canvas.getBoundingClientRect(),stageBounds=stage.getBoundingClientRect();
+   // The cursor follows the real canvas, with no invented project data.
+   scan.style.left=`${canvasBounds.left-stageBounds.left}px`;
+   scan.style.top=`${canvasBounds.top-stageBounds.top}px`;
+   scan.style.height=`${canvasBounds.height}px`;
+   playScrollMotion(canvas,[{clipPath:'inset(0 100% 0 0)',opacity:.65},{clipPath:'inset(0)',opacity:1}],0,780,'cubic-bezier(.22,.7,.24,1)');
+   playScrollMotion(scan,[{transform:'translateX(0)',opacity:0},{opacity:.85,offset:.08},{opacity:.65,offset:.85},{transform:`translateX(${canvasBounds.width}px)`,opacity:0}],0,780,'cubic-bezier(.22,.7,.24,1)');
+   [hero.querySelector('.hero-status'),hero.querySelector('.hero-float')].forEach((panel,i)=>{
+    if(panel.naturalWidth)playScrollMotion(panel,[{opacity:0,transform:`translateX(${i?10:-10}px) scale(.97)`},{opacity:1,transform:'none'}],390+i*130,400);
+   });
+  }else if(target.matches('.skill')){
+   // Stagger only siblings entering together; mobile cards reveal independently.
+   const siblings=entries.filter(item=>item.isIntersecting&&item.target.matches('.skill'));
+   playScrollMotion(target,[{opacity:.4,transform:'translateY(10px)'},{opacity:1,transform:'none'}],Math.max(0,siblings.findIndex(item=>item.target===target))*35,380);
+  }else if(target.matches('.project')){
+   playScrollMotion(target,[{opacity:.45,transform:'translateY(12px)'},{opacity:1,transform:'none'}],0,440);
+  }else if(target.matches('.dreso-art')){
+   playScrollMotion(target.querySelector('img'),[{opacity:.5,clipPath:'inset(0 0 12% 0)'},{opacity:1,clipPath:'inset(0)'}],0,560);
   }else{
-   playScrollMotion(entry.target,[{opacity:.35,clipPath:'inset(0 0 8% 0)'},{opacity:1,clipPath:'inset(0)'}],0,560);
+   // Tool rows communicate workflow groups without moving text spatially.
+   playScrollMotion(target,[{opacity:.4},{opacity:1}],0,320);
   }
- }),{threshold:.12,rootMargin:'0px 0px -32px 0px'});
- [hero,document.querySelector('#wordpress'),document.querySelector('.dreso-art>img')].filter(Boolean).forEach(el=>entrances.observe(el));
+ }),{threshold:.15,rootMargin:'0px 0px -24px 0px'});
+ [hero,...document.querySelectorAll('.skill,.project,.dreso-art,.tool-row')].forEach(el=>entrances.observe(el));
+ reduced.addEventListener('change',()=>{if(reduced.matches){entrances.disconnect();stopScrollMotion()}},{once:true});
 }
-document.addEventListener('visibilitychange',()=>{if(document.hidden)scrollAnimations.forEach(animation=>animation.cancel())});
+// Start after the stylesheet links and final layout have settled.
+function startScrollMotion(){
+ const styles=[...document.querySelectorAll('link[rel="stylesheet"]')];
+ Promise.all(styles.map(link=>new Promise(resolve=>{
+  if(link.sheet){resolve();return}
+  const finish=()=>{clearTimeout(timeout);link.removeEventListener('load',finish);link.removeEventListener('error',finish);resolve()};
+  const timeout=setTimeout(finish,2500);
+  link.addEventListener('load',finish,{once:true});link.addEventListener('error',finish,{once:true});
+ }))).then(()=>requestAnimationFrame(installScrollMotion));
+}
+// DOM is ready before deferred stylesheet checks; large portrait images do not block motion.
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startScrollMotion,{once:true});
+else queueMicrotask(startScrollMotion);
 const editorialStyles=document.createElement('link');editorialStyles.rel='stylesheet';editorialStyles.href='editorial.css';document.head.append(editorialStyles);
 const accentStyles=document.createElement('link');accentStyles.rel='stylesheet';accentStyles.href='accent.css';document.head.append(accentStyles);
 const polishStyles=document.createElement('link');polishStyles.rel='stylesheet';polishStyles.href='polish.css';document.head.append(polishStyles);
