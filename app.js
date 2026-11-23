@@ -64,7 +64,7 @@ document.querySelectorAll('.feature').forEach(feature=>{
  info.append(actions);copy.replaceChildren(label,info);
  const link=copy.querySelector('.text-link');link.classList.add('seal-link');link.innerHTML='Website<br>ansehen';
 });
-const shared=document.querySelector('.shared');shared.querySelector('summary').textContent='Mein Beitrag';
+const shared=document.querySelector('.shared');shared.querySelector('summary').textContent='Projekt im Detail';
 const sharedTitle=document.createElement('span');sharedTitle.className='shared-label';sharedTitle.textContent='Drei Projekte. Von der Konzeption bis zur Pflege.';shared.before(sharedTitle);
 document.querySelectorAll('.eyebrow').forEach(el=>el.remove());
 // Image-only lightbox with a persistent, accessible close target.
