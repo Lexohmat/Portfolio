@@ -67,7 +67,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 else queueMicrotask(startScrollMotion);
 const editorialStyles=document.createElement('link');editorialStyles.rel='stylesheet';editorialStyles.href='editorial.css';document.head.append(editorialStyles);
 const accentStyles=document.createElement('link');accentStyles.rel='stylesheet';accentStyles.href='accent.css';document.head.append(accentStyles);
-const polishStyles=document.createElement('link');polishStyles.rel='stylesheet';polishStyles.href='polish.css';document.head.append(polishStyles);
+const polishStyles=document.createElement('link');polishStyles.rel='stylesheet';polishStyles.href='polish.css?v=wordpress-result-1';document.head.append(polishStyles);
 document.querySelectorAll('.feature').forEach(feature=>{
  const copy=feature.querySelector('.project-copy'),art=feature.querySelector('.lcmd-art,.dreso-art');
  const label=document.createElement('div');label.className='case-title';const meta=copy.querySelector('.eyebrow');meta.className='case-meta';label.append(copy.querySelector('h3'),meta);

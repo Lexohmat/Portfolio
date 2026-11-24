@@ -36,7 +36,7 @@ footer{font-size:14px;color:#a7a4ad;margin-top:32px}footer a{padding:8px 0;min-h
 .feature .project-copy summary,.feature:first-of-type .project-copy summary{min-height:94px;max-width:calc(100% - 114px);padding:12px 0;font-size:16px;line-height:1.45}
 .disclosure-icon{flex-shrink:0}
 .feature .project-copy .disclosure-content p{margin:16px 0 0;line-height:1.75;max-width:70ch}
-.feature .project-copy .case-result{padding:18px 20px;background:#e7dff4;border-radius:12px;color:#352749}
+.feature .project-copy .case-result,.shared .disclosure-content .case-result,.shared>.case-result{padding:18px 20px;background:#e7dff4;border-radius:12px;color:#352749}
 .case-result strong{font-weight:650}
 .case-info,.case-title,.skill,.project-body,.tool-list{overflow-wrap:anywhere;min-width:0}
 .tool-list span{max-width:100%}
@@ -54,7 +54,7 @@ footer{font-size:14px;color:#a7a4ad;margin-top:32px}footer a{padding:8px 0;min-h
 @media(max-width:600px){
  .case-actions{min-height:80px;margin-top:18px}
  .feature .project-copy summary,.feature:first-of-type .project-copy summary{min-height:80px;max-width:calc(100% - 96px);font-size:15px}
- .feature .project-copy .case-result{padding:16px}
+ .feature .project-copy .case-result,.shared .disclosure-content .case-result,.shared>.case-result{padding:16px}
  .feature .project-copy .disclosure-content p{margin-top:12px}
  .feature .lcmd-art,.feature .dreso-art{padding-inline:20px}
  .section-heading h2{font-size:clamp(30px,8.5vw,36px)}
