@@ -38,7 +38,7 @@
   const use=node('use',{href:`#lcmd-${name}-original`,'clip-path':`url(#${id})`},svg);
   return {box,use};
  }
- let bars=[],ringClip,numberLayer,status,comparison,lines=[];
+ let bars=[],ringClip,numberLayer,numberCounter,status,comparison,lines=[];
  function build(){
   const plan=panel('plan',originals[0]);
   const cut=node('mask',{id:'lcmd-base-cut',maskUnits:'userSpaceOnUse',x:0,y:0,width:plan.a.width,height:plan.a.height},plan.defs);
@@ -51,6 +51,8 @@
   ringClip=node('path',{},clip);
   source(s.a.ring,s.svg,s.a.width,s.a.height).setAttribute('clip-path','url(#lcmd-ring)');
   numberLayer=clippedOriginal('status',s.a.number,s.defs,s.svg,'lcmd-percentage').use;
+  numberCounter=node('text',{x:s.a.center[0],y:s.a.center[1],'text-anchor':'middle','dominant-baseline':'central','font-family':'Arial, sans-serif','font-size':54,'font-weight':400,fill:'#fff',class:'lcmd-status-counter'},s.svg);
+  numberCounter.style.fontVariantNumeric='tabular-nums';
   const c=panel('comparison',originals[2]);comparison=c.svg;
   lines=c.a.paths.map((points,i)=>{
    const mask=node('mask',{id:`lcmd-curve-${i}`,maskUnits:'userSpaceOnUse',x:0,y:0,width:c.a.width,height:c.a.height,'mask-type':'alpha'},c.defs);
@@ -72,8 +74,16 @@
   const sweep=progress(t,2230,850),[cx,cy]=artwork.status.center,r=230;
   if(sweep>=1)ringClip.setAttribute('d',`M0 0H498V568H0Z`);
   else if(sweep<=0)ringClip.setAttribute('d','M0 0');
-  else{const angle=-Math.PI+sweep*Math.PI*2;ringClip.setAttribute('d',`M${cx} ${cy}L${cx-r} ${cy}A${r} ${r} 0 ${sweep>.5?1:0} 1 ${cx+Math.cos(angle)*r} ${cy+Math.sin(angle)*r}Z`)}
-  numberLayer.style.opacity=progress(t,3080,120);
+  else{
+   // Start at the leading edge of the light-lilac segment (lower right).
+   // The colored segments span about 270 degrees, including their original gaps.
+   const start=18*Math.PI/180,arc=sweep*270*Math.PI/180,angle=start+arc;
+   ringClip.setAttribute('d',`M${cx} ${cy}L${cx+Math.cos(start)*r} ${cy+Math.sin(start)*r}A${r} ${r} 0 ${arc>Math.PI?1:0} 1 ${cx+Math.cos(angle)*r} ${cy+Math.sin(angle)*r}Z`);
+  }
+  numberCounter.textContent=`${Math.round(67*sweep)}%`;
+  const settledNumber=progress(t,3080,120);
+  numberCounter.style.opacity=1-settledNumber;
+  numberLayer.style.opacity=settledNumber;
   comparison.style.opacity=progress(t,3200,180);
   lines.forEach((line,i)=>{const p=progress(t,3340+i*130,1160);line.path.style.strokeDashoffset=line.length*(1-p);line.layer.style.opacity=p>0?1:0});
   stage.dataset.lcmdTime=Math.round(t);
