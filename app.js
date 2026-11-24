@@ -5,10 +5,8 @@ document.querySelector('#wordpress').innerHTML=projects.map(([id,t,d])=>`<articl
 const groups=[['Design & Content',['Figma','Adobe XD','Photoshop','Canva','Premiere Pro']],['CMS & Website Management',['TYPO3','WordPress','Webflow','SharePoint']],['Analytics, Tracking & SEO',['Google Analytics / GA4','Google Tag Manager','Google Search Console','PageSpeed Insights']],['AI & Digital Workflows',['Codex','Claude AI','Nano Banana','Kling','Higgsfield']]];
 document.querySelector('#toolgroups').innerHTML=groups.map(([t,items])=>`<div class="tool-row"><h3>${t}</h3><div class="tool-list">${items.map(x=>`<span>${x}</span>`).join('')}</div></div>`).join('');
 const viewer=document.querySelector('#viewer');
-const refinementStyles=document.createElement('link');refinementStyles.rel='stylesheet';refinementStyles.href='refinements.css';document.head.append(refinementStyles);
-// A restrained exposure trail keeps the real portrait recognizable.
-const portrait=document.querySelector('.portrait');
-['trail-far','trail-near'].forEach(name=>{const layer=portrait.querySelector('img').cloneNode();layer.alt='';layer.setAttribute('aria-hidden','true');layer.className=name;portrait.append(layer)});
+const refinementStyles=document.createElement('link');refinementStyles.rel='stylesheet';refinementStyles.href='refinements.css?v=portrait-studio-1';document.head.append(refinementStyles);
+// Studio portrait uses one responsive image without duplicate exposure layers.
 const hero=document.querySelector('.lcmd-art');
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 const reviewStyles=document.createElement('link');reviewStyles.rel='stylesheet';reviewStyles.href='review.css';document.head.append(reviewStyles);
