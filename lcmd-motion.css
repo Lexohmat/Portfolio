@@ -1,0 +1,11 @@
+/* Exact artwork layers occupy the existing image boxes, with no layout changes. */
+.hero-stage .lcmd-motion{display:none;position:absolute;pointer-events:none;overflow:hidden;border-radius:inherit}
+.hero-stage.lcmd-active .lcmd-motion{display:block}
+.hero-stage.lcmd-active>img{opacity:0}
+.hero-stage .lcmd-motion-plan{z-index:1;border-radius:8px}
+.hero-stage .lcmd-motion-status,.hero-stage .lcmd-motion-comparison{z-index:3;border-radius:8px;background:#171320}
+.hero-stage .lcmd-motion-status{filter:drop-shadow(0 14px 25px #0005)}
+.hero-stage .lcmd-motion-comparison{box-shadow:0 12px 40px #0006}
+@media(prefers-reduced-motion:reduce){.hero-stage.lcmd-active>img{opacity:1}.hero-stage.lcmd-active .lcmd-motion{display:none}}
+/* Width/height attributes reserve the intrinsic ratio; CSS sizes all three images responsively. */
+.hero-stage>img.hero-main,.hero-stage>img.hero-status,.hero-stage>img.hero-float{height:auto}

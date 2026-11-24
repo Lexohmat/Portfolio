@@ -10,8 +10,6 @@ const refinementStyles=document.createElement('link');refinementStyles.rel='styl
 const portrait=document.querySelector('.portrait');
 ['trail-far','trail-near'].forEach(name=>{const layer=portrait.querySelector('img').cloneNode();layer.alt='';layer.setAttribute('aria-hidden','true');layer.className=name;portrait.append(layer)});
 const hero=document.querySelector('.lcmd-art');
-hero.innerHTML=`<div class="hero-top"><span class="project-logo">lcmd<span> simplify projects</span></span></div><h3>The Enterprise Platform<br>for your Construction Projects</h3><p class="hero-sub">Industrial-Grade Productivity Software for Construction.</p><div class="hero-phases" aria-label="Projektphasen"><span>Planning</span><span>Design</span><span>Management</span><span>Execution</span><span>Delivery</span></div><div class="hero-stage"><img class="hero-main" src="https://cdn.prod.website-files.com/65fd31d519cdd770990dd460/69ebc7763364a0a4e1b1e5c4_en-final-hero.webp" alt="lcmd Plattform für Planung und Steuerung von Bauprojekten"><img class="hero-float" src="https://cdn.prod.website-files.com/65fd31d519cdd770990dd460/69de73a64561947f1f393238_soll-ist-EN.webp" alt="Soll-Ist-Vergleich im lcmd Dashboard"></div><a class="hero-source" href="https://www.lcmd.io/en" target="_blank" rel="noopener">Original-Website ansehen</a>`;
-hero.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.hidden=true;hero.classList.add('media-unavailable')}));
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 const reviewStyles=document.createElement('link');reviewStyles.rel='stylesheet';reviewStyles.href='review.css';document.head.append(reviewStyles);
 const iconPaths=[
@@ -23,11 +21,7 @@ const iconPaths=[
 '<rect x="6" y="6" width="12" height="12" rx="3"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4m-13-3 2 2 4-4"/>'
 ];
 document.querySelectorAll('.skill-icon').forEach((el,i)=>{el.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${iconPaths[i]}</svg>`});
-hero.classList.add('visual-hero');
-hero.querySelector('h3').remove();hero.querySelector('.hero-sub').remove();hero.querySelector('.hero-phases').remove();hero.querySelector('.hero-source').remove();
-const statusImage=document.createElement('img');statusImage.className='hero-status';statusImage.alt='lcmd Status-Tracking';statusImage.src='https://cdn.prod.website-files.com/65fd31d519cdd770990dd460/6989df83077dab4e5dde6786_Home%20Status%20Tracking%20DE.webp';hero.querySelector('.hero-stage').append(statusImage);
-// One authored focal sequence: a planning cursor reveals the real LCMD canvas.
-// All content remains visible if animation, image loading or observers fail.
+// Supporting section entrances remain unchanged. LCMD has its own controlled timeline.
 const scrollAnimations=new Set();
 function playScrollMotion(element,frames,delay=0,duration=440,easing='cubic-bezier(.16,1,.3,1)'){
  if(!element||reduced.matches||document.hidden||typeof element.animate!=='function')return;
@@ -37,14 +31,6 @@ function playScrollMotion(element,frames,delay=0,duration=440,easing='cubic-bezi
  animation.onfinish=release;animation.oncancel=release;
  return animation;
 }
-const stage=hero.querySelector('.hero-stage');
-const scan=document.createElement('span');scan.className='planning-cursor';scan.setAttribute('aria-hidden','true');stage.append(scan);
-const readyImage=img=>new Promise(resolve=>{
- if(img.complete){resolve();return}
- const finish=()=>{clearTimeout(timeout);img.removeEventListener('load',finish);img.removeEventListener('error',finish);resolve()};
- const timeout=setTimeout(finish,4000);
- img.addEventListener('load',finish,{once:true});img.addEventListener('error',finish,{once:true});
-});
 function stopScrollMotion(){scrollAnimations.forEach(animation=>animation.cancel())}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopScrollMotion()});
 function installScrollMotion(){
@@ -52,26 +38,7 @@ function installScrollMotion(){
  const entrances=new IntersectionObserver(entries=>entries.forEach(async entry=>{
   if(!entry.isIntersecting)return;
   const target=entry.target;entrances.unobserve(target);
-  if(target===hero){
-   const canvas=hero.querySelector('.hero-main');
-   const waitingSince=performance.now();
-   await readyImage(canvas);
-   const loadedLate=performance.now()-waitingSince>500;
-   if(reduced.matches)return;
-   const bounds=hero.getBoundingClientRect();
-   if(document.hidden||bounds.bottom<0||bounds.top>innerHeight){entrances.observe(hero);return}
-   if(!canvas.naturalWidth||loadedLate)return;
-   const canvasBounds=canvas.getBoundingClientRect(),stageBounds=stage.getBoundingClientRect();
-   // The cursor follows the real canvas, with no invented project data.
-   scan.style.left=`${canvasBounds.left-stageBounds.left}px`;
-   scan.style.top=`${canvasBounds.top-stageBounds.top}px`;
-   scan.style.height=`${canvasBounds.height}px`;
-   playScrollMotion(canvas,[{clipPath:'inset(0 100% 0 0)',opacity:.65},{clipPath:'inset(0)',opacity:1}],0,780,'cubic-bezier(.22,.7,.24,1)');
-   playScrollMotion(scan,[{transform:'translateX(0)',opacity:0},{opacity:.85,offset:.08},{opacity:.65,offset:.85},{transform:`translateX(${canvasBounds.width}px)`,opacity:0}],0,780,'cubic-bezier(.22,.7,.24,1)');
-   [hero.querySelector('.hero-status'),hero.querySelector('.hero-float')].forEach((panel,i)=>{
-    if(panel.naturalWidth)playScrollMotion(panel,[{opacity:0,transform:`translateX(${i?10:-10}px) scale(.97)`},{opacity:1,transform:'none'}],390+i*130,400);
-   });
-  }else if(target.matches('.skill')){
+  if(target.matches('.skill')){
    // Stagger only siblings entering together; mobile cards reveal independently.
    const siblings=entries.filter(item=>item.isIntersecting&&item.target.matches('.skill'));
    playScrollMotion(target,[{opacity:.4,transform:'translateY(10px)'},{opacity:1,transform:'none'}],Math.max(0,siblings.findIndex(item=>item.target===target))*35,380);
@@ -84,7 +51,7 @@ function installScrollMotion(){
    playScrollMotion(target,[{opacity:.4},{opacity:1}],0,320);
   }
  }),{threshold:.15,rootMargin:'0px 0px -24px 0px'});
- [hero,...document.querySelectorAll('.skill,.project,.dreso-art,.tool-row')].forEach(el=>entrances.observe(el));
+ [...document.querySelectorAll('.skill,.project,.dreso-art,.tool-row')].forEach(el=>entrances.observe(el));
  reduced.addEventListener('change',()=>{if(reduced.matches){entrances.disconnect();stopScrollMotion()}},{once:true});
 }
 // Start after the stylesheet links and final layout have settled.
