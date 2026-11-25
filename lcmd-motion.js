@@ -7,7 +7,7 @@
  const preference=matchMedia('(prefers-reduced-motion: reduce)');
  const originals=[stage.querySelector('img.hero-main'),stage.querySelector('img.hero-status'),stage.querySelector('img.hero-float')];
  if(originals.some(image=>!image))return;
- const NS='http://www.w3.org/2000/svg',TOTAL=4650;
+ const NS='http://www.w3.org/2000/svg',TOTAL=3200;
  // Browser scroll restoration can run before the existing page adds its skill cards/CSS.
  // Settle a direct project link after that layout, unless the visitor has already navigated.
  const directProjectLink=location.hash==='#projects';
@@ -84,10 +84,11 @@
   const settledNumber=progress(t,3080,120);
   numberCounter.style.opacity=1-settledNumber;
   numberLayer.style.opacity=settledNumber;
-  comparison.style.opacity=progress(t,3200,180);
-  lines.forEach((line,i)=>{const p=progress(t,3340+i*130,1160);line.path.style.strokeDashoffset=line.length*(1-p);line.layer.style.opacity=p>0?1:0});
+  comparison.style.opacity=progress(t,2100,180);
+  // Both curves share the status sweep and counter's progress, with no stagger.
+  lines.forEach(line=>{line.path.style.strokeDashoffset=line.length*(1-sweep);line.layer.style.opacity=sweep>0?1:0});
   stage.dataset.lcmdTime=Math.round(t);
-  stage.dataset.lcmdPhase=t<2100?'planning':t<3200?'status':'comparison';
+  stage.dataset.lcmdPhase=t<2100?'planning':'status-comparison';
  }
  function exposure(){
   // Use the actual dashboard rather than the heading/large enclosing section.
